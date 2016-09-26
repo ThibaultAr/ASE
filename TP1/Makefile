@@ -1,4 +1,4 @@
-ALL = try_mul
+ALL = try_mul display_stack
 
 compile: $(ALL)
 
@@ -9,6 +9,9 @@ try_mul.o : try_mul.c try.h
 	gcc -m32 -c $<
 
 try_mul: try_mul.o try.o
+	gcc -m32 $^ -o $@
+
+display_stack: display_stack.c
 	gcc -m32 $^ -o $@
 
 clean:
