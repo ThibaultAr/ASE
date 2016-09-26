@@ -62,31 +62,31 @@ func: main              esp : 0xffa47710         ebp : 0xffa47728
 ```
 
 Ici l'on peut voir que lorsque l'on rentre dans la fonction *nothing_to_do*, les adresses de **esp** et **ebp** ne sont plus les mêmes que celles de la fonction main. Ceci montre que la fenêtre courant à changé et que l'on a empilé le contexte correspondant à la fonction *nothing_to_do*. Ensuite, dans la fonction main, nous executons *useless_cpt* on peut voir queles adresses de **esp** et **ebp** ont encore changés pour la même raison que si dessus. Lorsque l'on appelle récursivement *useless_cpt* on peut voir que les adresses de **esp** et **ebp** change de nouveau, car l'on empile un deuxième contexte correspondant à un autre *useless_cpt*, on a donc une pile avec comme:<br/>
-|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br/>
+|             |<br/>
 | useless_cpt |<br/>
-|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br/>
+|             |<br/>
  \-------------<br/>
-|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br/>
+|             |<br/>
 | useless_cpt |<br/>
-|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br/>
+|             |<br/>
 \-------------<br/>
-|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br/>
-|&nbsp;&nbsp;&nbsp;&nbsp;main &nbsp;&nbsp;&nbsp;&nbsp;|<br/>
-|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br/>
+|             |<br/>
+|    main     |<br/>
+|             |<br/>
  \-------------<br/>
 
-On peut aussi noter que l'addresses du paramètre de *useless_cpt* n'est plus la même non plus, simplement car ce ne sont pas les mêmes paramètres. Chaque contexte de *useless_cpt* possède sont propre paramètre, respectivement:
-|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br/>
+On peut aussi noter que l'addresses du paramètre de *useless_cpt* n'est plus la même non plus, simplement car ce ne sont pas les mêmes paramètres. Chaque contexte de *useless_cpt* possède sont propre paramètre, respectivement:<br/>
+|             |<br/>
 | useless_cpt |<br/>
-|&nbsp;&nbsp;&nbsp;&nbsp;param&nbsp;&nbsp;&nbsp;&nbsp;| <- ici<br/>
+|    param    | <- ici<br/>
  \-------------<br/>
-|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br/>
+|             |<br/>
 | useless_cpt |<br/>
-|&nbsp;&nbsp;&nbsp;&nbsp;param&nbsp;&nbsp;&nbsp;&nbsp;| <- et ici<br/>
+|    param    | <- et ici<br/>
 \-------------<br/>
-|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br/>
-|&nbsp;&nbsp;&nbsp;&nbsp;main &nbsp;&nbsp;&nbsp;&nbsp;|<br/>
-|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br/>
+|             |<br/>
+|    main     |<br/>
+|             |<br/>
  \-------------<br/>
 
 Après tous les appels à *useless_cpt*, on les dépiles un à un jusqu'à ce que le premier appel se termine et on retourne dans *main*. Voilà pourquoi les addresses de *main* à la dernière ligne sont les mêmes que celles de la première ligne.
