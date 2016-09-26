@@ -14,5 +14,11 @@ try_mul: try_mul.o try.o
 display_stack: display_stack.c
 	gcc -m32 $^ -o $@
 
+execNumbers: try_mul
+	./try_mul
+
+displayStack: display_stack
+	./display_stack
+
 clean:
 	rm -f *.o *.s $(ALL)

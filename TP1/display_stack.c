@@ -40,8 +40,17 @@ int main () {
   asm("movl %%ebp, %0"
         : "=r" (ebp));
 
+  printf("func: main ");
   display_stack(esp, ebp);
   nothing_to_do();
   useless_cpt(3);
+
+  asm("movl %%esp, %0"
+        : "=r" (esp));
+  asm("movl %%ebp, %0"
+        : "=r" (ebp));
+
+  printf("func: main ");
+  display_stack(esp, ebp);
 
 }
