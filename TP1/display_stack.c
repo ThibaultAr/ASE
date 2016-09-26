@@ -11,7 +11,7 @@ void nothing_to_do() {
         : "=r" (esp));
   asm("movl %%ebp, %0"
         : "=r" (ebp));
-  printf("func: nothing_to_do ");
+  printf("func: nothing_to_do\t");
   display_stack(esp, ebp);
 }
 
@@ -22,7 +22,7 @@ int useless_cpt(int n) {
         : "=r" (esp));
   asm("movl %%ebp, %0"
         : "=r" (ebp));
-  printf("func: useless_cpt ");
+  printf("func: useless_cpt \t");
   display_stack(esp, ebp);
   printf("param : %#010x\n", &n);
 
@@ -40,7 +40,7 @@ int main () {
   asm("movl %%ebp, %0"
         : "=r" (ebp));
 
-  printf("func: main ");
+  printf("func: main\t\t");
   display_stack(esp, ebp);
   nothing_to_do();
   useless_cpt(3);
@@ -50,7 +50,7 @@ int main () {
   asm("movl %%ebp, %0"
         : "=r" (ebp));
 
-  printf("func: main ");
+  printf("func: main\t\t");
   display_stack(esp, ebp);
 
 }
