@@ -1,0 +1,4 @@
+*.exe
+*.o
+display_stack
+try_mul
