@@ -48,7 +48,7 @@ void start_current_ctx () {
 
 void switch_to_ctx (struct ctx_s * ctx) {
   assert(ctx->ctx_magic == CTX_MAGIC);
-  if(ctx->ctx_state == CTX_END) {
+  while(ctx->ctx_state == CTX_END) {
     free(ctx->ctx_stack);
     if(ctx->ctx_next == ctx) {
       ring_ctx = NULL;
@@ -59,13 +59,14 @@ void switch_to_ctx (struct ctx_s * ctx) {
       asm("movl %0, %%ebp"
           :
           : "r" (main_ebp));
+      return;
     } else {
       printf("\nA process has ended\n");
       cctx->ctx_next = ctx->ctx_next;
       if(ring_ctx == ctx)
         ring_ctx = ctx->ctx_next;
       free(ctx);
-      return;
+      ctx = cctx;
     }
   }
 
