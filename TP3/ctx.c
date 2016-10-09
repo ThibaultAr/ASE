@@ -13,6 +13,14 @@ static void timer_it() {
   yield();
 }
 
+static void irq_disable() {
+  _mask(TIMER_IRQ + 1);
+}
+
+static void irq_enable() {
+  _mask(1);
+}
+
 void start_schedule() {
   // Hardware initialization
   if(init_hardware(HARDWARE_INI) == 0) {
@@ -30,7 +38,7 @@ void start_schedule() {
   _out(TIMER_PARAM, 128 + 64 + 32 + 8); //reset + alarm on + 8 tick / alarm
   _out(TIMER_ALARM, 0xFFFFFFFE); // alarm at next tick (at 0xffffffff)
 
-  _mask(1);
+  irq_enable();
 
   for (int i=0; i<(1<<28); i++);
 }
@@ -49,6 +57,7 @@ int init_ctx (struct ctx_s * ctx, int stack_size, func_t * f, void * args) {
 
 int create_ctx(int stack_size, func_t * f, void * args){
   struct ctx_s * ctx = malloc (sizeof(struct ctx_s));
+  irq_disable();
   if(!ring_ctx){
     ring_ctx = ctx;
     ctx->ctx_next = ctx;
@@ -57,6 +66,7 @@ int create_ctx(int stack_size, func_t * f, void * args){
     ring_ctx->ctx_next = ctx;
   }
   init_ctx(ctx, stack_size, f, args);
+  irq_enable();
   return 0;
 }
 
@@ -79,6 +89,7 @@ void start_current_ctx () {
 
 void switch_to_ctx (struct ctx_s * ctx) {
   assert(ctx->ctx_magic == CTX_MAGIC);
+  irq_disable();
   while(ctx->ctx_state == CTX_END) {
     free(ctx->ctx_stack);
     if(ctx->ctx_next == ctx) {
@@ -119,7 +130,7 @@ void switch_to_ctx (struct ctx_s * ctx) {
   asm("movl %0, %%ebp"
       :
       : "r" (cctx->ctx_ebp));
-
+  irq_enable();
   if(cctx->ctx_state == CTX_INIT)
     start_current_ctx();
   return;
