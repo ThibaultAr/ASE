@@ -1,15 +1,19 @@
+CC = gcc
+CFLAGS = -m32
+CFLAGS += -g
+
 ALL = ctx.o pingpong
 
 compile: $(ALL)
 
 ctx.o : ctx.c ctx.h
-	gcc -m32 -g -c $<
+	$(CC) $(CFLAGS) -c $<
 
 pingpong.o : pingpong.c ctx.h
-	gcc -m32 -g -c $<
+	$(CC) $(CFLAGS) -c $<
 
 pingpong: pingpong.o ctx.o
-	gcc -m32 -g $^ -o $@
+	$(CC) $(CFLAGS) $^ -o $@
 
 clean:
 	rm -f *.o *.s $(ALL)
