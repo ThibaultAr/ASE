@@ -18,3 +18,9 @@ BCABCABCABCABC
 ```
 
 Quand les deux s'arrêtent.
+
+```
+A1B2C
+A process has ended
+hello world
+```
