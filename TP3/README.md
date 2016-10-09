@@ -36,10 +36,14 @@ ABCABCABCABCABCABCABCABCABCABCABCABCABCABCABCABCABCABCABCABC12121212121212121212
 
 Quand pong s'arrête, mais pas ping.
 ```
-
+$ ./pingpong
+ABCABCA12CABCABCA
 ```
 
 Quand les deux s'arrêtent
 ```
-
+$ ./pingpong
+ABC12
+A process has ended
+hello world
 ```
