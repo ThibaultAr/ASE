@@ -2,58 +2,60 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct ctx_s ctx_ping;
+/*struct ctx_s ctx_ping;
 struct ctx_s ctx_pong;
 struct ctx_s ctx_ping_ended;
-struct ctx_s ctx_pong_ended;
+struct ctx_s ctx_pong_ended;*/
 
 void f_ping (void * args) {
   while (1) {
     printf("A");
-    yield();
+//    yield();
     printf("B");
-    yield();
+//    yield();
     printf("C");
-    yield();
+//    yield();
   }
 }
 
 void f_pong (void * args) {
   while (1) {
     printf("1");
-    yield();
+//    yield();
     printf("2");
-    yield();
+//    yield();
   }
 }
 
 void f_ping_ended (void * args) {
     printf("A");
-    yield();
+//    yield();
     printf("B");
-    yield();
+//    yield();
     printf("C");
-    yield();
+//    yield();
 }
 
 void f_pong_ended (void * args) {
   printf("1");
-  yield();
+//  yield();
   printf("2");
-  yield();
+//  yield();
 }
 
 int main() {
   /*create_ctx(16384, f_ping, NULL);
   create_ctx(16384, f_pong_ended, NULL);*/
 
-  /*create_ctx(16384, f_ping, NULL);
-  create_ctx(16384, f_pong, NULL);*/
+  create_ctx(16384, f_ping, NULL);
+  create_ctx(16384, f_pong, NULL);
 
-  create_ctx(16384, f_ping_ended, NULL);
-  create_ctx(16384, f_pong_ended, NULL);
+  /*create_ctx(16384, f_ping_ended, NULL);
+  create_ctx(16384, f_pong_ended, NULL);*/
 
-  yield();
+  /*yield();*/
+
+  start_schedule();
 
   printf("hello world\n");
   exit(EXIT_SUCCESS);

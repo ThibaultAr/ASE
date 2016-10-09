@@ -3,6 +3,8 @@ Dubois Yann
 
 #TP3
 
+##Avec yield en cascade
+
 Quand ni ping, ni pong ne s'arrête.
 ```
 $ ./pingpong
@@ -23,4 +25,21 @@ Quand les deux s'arrêtent.
 A1B2C
 A process has ended
 hello world
+```
+##Après avoir codé start_schedule
+
+Quand ni ping, ni pong ne s'arrête.
+```
+$ ./pingpong
+ABCABCABCABCABCABCABCABCABCABCABCABCABCABCABCABCABCABCABCABC1212121212121212121212
+```
+
+Quand pong s'arrête, mais pas ping.
+```
+
+```
+
+Quand les deux s'arrêtent
+```
+
 ```

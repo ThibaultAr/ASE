@@ -4,6 +4,37 @@ static struct ctx_s * cctx = (struct ctx_s *) 0;
 static void * main_esp;
 static void * main_ebp;
 
+static void empty_it(void) {
+    return;
+}
+
+static void timer_it() {
+  _out(TIMER_ALARM,0xFFFFFFFE);
+  yield();
+}
+
+void start_schedule() {
+  // Hardware initialization
+  if(init_hardware(HARDWARE_INI) == 0) {
+    printf("Error in hardware initialization\n");
+    exit(EXIT_FAILURE);
+  }
+
+  //timer irq define
+  for(int i = 0; i < 16; i++)
+    IRQVECTOR[i] = empty_it;
+
+  IRQVECTOR[TIMER_IRQ] = timer_it;
+
+  //arm timer
+  _out(TIMER_PARAM, 128 + 64 + 32 + 8); //reset + alarm on + 8 tick / alarm
+  _out(TIMER_ALARM, 0xFFFFFFFE); // alarm at next tick (at 0xffffffff)
+
+  _mask(1);
+
+  for (int i=0; i<(1<<28); i++);
+}
+
 int init_ctx (struct ctx_s * ctx, int stack_size, func_t * f, void * args) {
   ctx->ctx_magic = CTX_MAGIC;
   ctx->ctx_f = f;
