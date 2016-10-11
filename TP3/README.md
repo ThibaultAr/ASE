@@ -72,3 +72,52 @@ Met l'objet 3 à l'indice 0
 Produit l'objet 2
 Met l'objet 2 à l'indice 1
 ```
+```
+Produit l'objet 1
+Met l'objet 1 à l'indice 0
+Produit l'objet 2
+Met l'objet 2 à l'indice 1
+Produit l'objet 3
+Retire l'objet 1 à l'indice 0
+Utilise l'objet 1
+Retire l'objet 2 à l'indice 1
+Utilise l'objet 2
+Met l'objet 3 à l'indice 0
+Produit l'objet 2
+Met l'objet 2 à l'indice 1
+Produit l'objet 3
+Retire l'objet 3 à l'indice 0
+Utilise l'objet 3
+Retire l'objet 2 à l'indice 1
+Utilise l'objet 2
+Met l'objet 3 à l'indice 0
+Produit l'objet 2
+Met l'objet 2 à l'indice 1
+```
+```
+P1 Produit l'objet 1
+P1 Met l'objet 1 à l'indice 0
+P1 Produit l'objet 2
+P1 Met l'objet 2 à l'indice 1
+P1 Produit l'objet 3
+C3 Retire l'objet 1 à l'indice 0
+C3 Utilise l'objet 1
+C3 Retire l'objet 2 à l'indice 1
+C3 Utilise l'objet 2
+P1 Met l'objet 3 à l'indice 0
+P1 Produit l'objet 2
+P1 Met l'objet 2 à l'indice 1
+P1 Produit l'objet 3
+C2 Retire l'objet 3 à l'indice 0
+C2 Utilise l'objet 3
+C1 Retire l'objet 2 à l'indice 1
+C1 Utilise l'objet 2
+P1 Met l'objet 3 à l'indice 0
+P1 Produit l'objet 2
+P1 Met l'objet 2 à l'indice 1
+P1 Produit l'objet 3
+C2 Retire l'objet 3 à l'indice 0
+C2 Utilise l'objet 3
+C1 Retire l'objet 2 à l'indice 1
+C1 Utilise l'objet 2
+```
