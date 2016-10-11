@@ -47,3 +47,28 @@ ABC12
 A process has ended
 hello world
 ```
+
+##Synchronisation entre contexte
+
+```
+Produit l'objet 1
+Met l'objet 1 à l'indice 0
+Produit l'objet 2
+Met l'objet 2 à l'indice 1
+Produit l'objet 3
+Retire l'objet 1 à l'indice 0
+Utilise l'objet 1
+Retire l'objet 2 à l'indice 1
+Utilise l'objet 2
+Met l'objet 3 à l'indice 0
+Produit l'objet 2
+Met l'objet 2 à l'indice 1
+Produit l'objet 3
+Retire l'objet 3 à l'indice 0
+Utilise l'objet 3
+Retire l'objet 2 à l'indice 1
+Utilise l'objet 2
+Met l'objet 3 à l'indice 0
+Produit l'objet 2
+Met l'objet 2 à l'indice 1
+```

@@ -20,7 +20,7 @@
 
 typedef void (func_t) (void *);
 
-enum ctx_state_e {CTX_INIT, CTX_EXEC, CTX_END};
+enum ctx_state_e {CTX_INIT, CTX_EXEC, CTX_END, CTX_SEM};
 
 struct ctx_s {
   unsigned ctx_magic;
@@ -31,9 +31,10 @@ struct ctx_s {
   enum ctx_state_e ctx_state;
   char * ctx_stack;
   struct ctx_s * ctx_next;
+  struct ctx_s * ctx_next_sem;
 };
 
-static struct ctx_s * ring_ctx = NULL;
+extern struct ctx_s * cctx;
 
 void start_schedule();
 
@@ -44,3 +45,7 @@ int create_ctx(int stack_size, func_t * f, void * args);
 int init_ctx (struct ctx_s * ctx, int stack_size, func_t * f, void * args);
 
 void switch_to_ctx (struct ctx_s * ctx);
+
+void irq_disable();
+
+void irq_enable();

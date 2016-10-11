@@ -1,6 +1,7 @@
 #include "ctx.h"
 
-static struct ctx_s * cctx = (struct ctx_s *) 0;
+struct ctx_s * cctx = (struct ctx_s *) 0;
+static struct ctx_s * ring_ctx = NULL;
 static void * main_esp;
 static void * main_ebp;
 
@@ -13,11 +14,12 @@ static void timer_it() {
   yield();
 }
 
-static void irq_disable() {
+void irq_disable() {
   _mask(TIMER_IRQ + 1);
+  _out(TIMER_ALARM,0xFFFFFFFE);
 }
 
-static void irq_enable() {
+void irq_enable() {
   _mask(1);
 }
 
@@ -90,6 +92,9 @@ void start_current_ctx () {
 void switch_to_ctx (struct ctx_s * ctx) {
   assert(ctx->ctx_magic == CTX_MAGIC);
   irq_disable();
+  while(ctx->ctx_state == CTX_SEM) {
+    ctx = ctx->ctx_next;
+  }
   while(ctx->ctx_state == CTX_END) {
     free(ctx->ctx_stack);
     if(ctx->ctx_next == ctx) {
