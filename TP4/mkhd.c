@@ -14,9 +14,17 @@
 #include <stdio.h>
 #include "hardware.h"
 #include "drive.h"
+#include "dump.c"
 
 static void empty_it() {
   return;
+}
+
+void dmps (unsigned int cylinder, unsigned int sector) {
+  unsigned char buffer[SECTORSIZE];
+  check_dskinfo(cylinder, sector);
+  read_sector(cylinder, sector, buffer);
+  dump(buffer, SECTORSIZE, 0, 1);
 }
 
 int main(int argc, char **argv) {
@@ -35,7 +43,7 @@ int main(int argc, char **argv) {
   /* Allows all IT */
   _mask(1);
 
-  check_dskinfo(1, 1);
+  dmps(15,15);
 
   /* and exit! */
   exit(EXIT_SUCCESS);

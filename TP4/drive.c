@@ -22,7 +22,7 @@ void write_sector(unsigned int cylinder, unsigned int sector, const unsigned cha
   memcpy(MASTERBUFFER, buffer, SECTORSIZE);
   goto_sector(cylinder, sector);
   _out(HDA_DATAREGS, 0);
-  _out(HDA_DATAREGS, 1);
+  _out(HDA_DATAREGS + 1, 1);
   _out(HDA_CMDREG, CMD_WRITE);
   _sleep(HDA_IRQ);
 }
@@ -49,12 +49,18 @@ void check_dskinfo(unsigned int cylinder, unsigned int sector) {
   tailleSec = _in(HDA_DATAREGS + 4);
   tailleSec = (tailleSec << 8) + _in(HDA_DATAREGS + 5);
 
-  if(tailleSec != SECTORSIZE)
+  if(tailleSec != SECTORSIZE) {
     printf("Recompilez le noyau avec une taille de secteur de : %d\n", tailleSec);
+    exit(1);
+  }
 
-  if(cylinder > nbCyl || cylinder > 0xFF)
-    printf("L'indice du cylindre est trop grand ou n'est pas sur 16 bits\n");
+  if(cylinder >= nbCyl || cylinder > 0xFF) {
+    printf("L'indice du cylindre est trop grand ou n'est pas sur 16 bits (indice max : %d)\n", nbCyl - 1);
+    exit(1);
+  }
 
-  if(sector > nbSec || sector > 0xFF)
-    printf("L'indice du secteur est trop grand ou n'est pas sur 16 bits\n");
+  if(sector >= nbSec || sector > 0xFF) {
+    printf("L'indice du secteur est trop grand ou n'est pas sur 16 bits (indice max : %d)\n", nbSec - 1);
+    exit(1);
+  }
 }
