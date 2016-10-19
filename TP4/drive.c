@@ -30,10 +30,13 @@ void write_sector(unsigned int cylinder, unsigned int sector, const unsigned cha
 void format_sector(unsigned int cylinder, unsigned int sector, unsigned int nsector, unsigned int value) {
   int i;
   goto_sector(cylinder, sector);
+  _out(HDA_DATAREGS, 0);
+  _out(HDA_DATAREGS + 1, 1);
+  _out(HDA_DATAREGS + 2, (value >> 24) & 0xFF);
+  _out(HDA_DATAREGS + 3, (value >> 16) & 0xFF);
+  _out(HDA_DATAREGS + 4, (value >> 8) & 0xFF);
+  _out(HDA_DATAREGS + 5, value & 0xFF);
   for(i = 0; i < nsector; i++) {
-    _out(HDA_DATAREGS, 0);
-    _out(HDA_DATAREGS + 1, 1);
-    _out(HDA_DATAREGS + 2, nsector);
     _out(HDA_CMDREG, CMD_FORMAT);
     _sleep(HDA_IRQ);
   }
@@ -54,12 +57,12 @@ void check_dskinfo(unsigned int cylinder, unsigned int sector) {
     exit(1);
   }
 
-  if(cylinder >= nbCyl || cylinder > 0xFF) {
+  if(cylinder >= nbCyl || cylinder > 0xFF || nbCyl != CYLINDERS) {
     printf("L'indice du cylindre est trop grand ou n'est pas sur 16 bits (indice max : %d)\n", nbCyl - 1);
     exit(1);
   }
 
-  if(sector >= nbSec || sector > 0xFF) {
+  if(sector >= nbSec || sector > 0xFF || nbSec != SECTORS) {
     printf("L'indice du secteur est trop grand ou n'est pas sur 16 bits (indice max : %d)\n", nbSec - 1);
     exit(1);
   }

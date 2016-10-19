@@ -27,8 +27,16 @@ void dmps (unsigned int cylinder, unsigned int sector) {
   dump(buffer, SECTORSIZE, 0, 1);
 }
 
+void frmt(unsigned int value) {
+    int i;
+    check_dskinfo(0, 0);
+    for(i = 0; i < CYLINDERS; i++) {
+      format_sector(i, 0, SECTORS, value);
+    }
+}
+
 int main(int argc, char **argv) {
-  unsigned int i;
+  unsigned int i, j;
 
   /* init hardware */
   if(init_hardware("hardware.ini") == 0) {
@@ -43,7 +51,12 @@ int main(int argc, char **argv) {
   /* Allows all IT */
   _mask(1);
 
-  dmps(15,15);
+  frmt(0);
+  for(i = 0; i < CYLINDERS; i++) {
+    for(j = 0; j < SECTORS; j++) {
+      dmps(i, j);
+    }
+  }
 
   /* and exit! */
   exit(EXIT_SUCCESS);
