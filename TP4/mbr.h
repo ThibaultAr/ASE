@@ -5,6 +5,8 @@
 
 enum vol_type_e {VOL_BASIC, VOL_ANX, VOL_OTHER};
 
+extern struct mbr_s mbr;
+
 struct volume_s {
   unsigned int vol_first_sector;
   unsigned int vol_first_cylinder;
@@ -18,6 +20,10 @@ struct mbr_s {
   unsigned int mbr_nVol;
   unsigned int mbr_magic;
 };
+
+int read_mbr();
+
+void write_mbr();
 
 void read_bloc(int numVol, int numBloc, unsigned char *buffer);
 

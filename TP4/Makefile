@@ -17,7 +17,7 @@ BINARIES= mkhd
 OBJECTS	= $(addsuffix .o,\
 	  mkhd)
 
-all: $(BINARIES) $(OBJECTS) drive.o mbr.o
+all: $(BINARIES) $(OBJECTS) drive.o mbr.o vm
 
 
 ###------------------------------
@@ -34,6 +34,18 @@ drive.o: drive.c drive.h
 
 mbr.o: mbr.c mbr.h drive.h
 	$(CC) $(CFLAGS) -c mbr.c $(INCDIR)
+
+mkvol.o: mkvol.c mbr.h
+	$(CC) $(CFLAGS) -c mkvol.c $(INCDIR)
+
+mkvol: mkvol.o mbr.o
+	$(CC) $(CFLAGS) -o mkvol $^ $(LIBS)
+
+vm.o: vm.c
+	$(CC) $(CFLAGS) -c vm.c $(INCDIR)
+
+vm: vm.o mbr.o drive.o
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 ###------------------------------
 ### Misc.

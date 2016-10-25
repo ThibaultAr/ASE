@@ -1,6 +1,6 @@
 #include "mbr.h"
 
-static struct mbr_s mbr;
+struct mbr_s mbr;
 
 int read_mbr() {
   read_sector_n(0, 0, (unsigned char *) &mbr, sizeof(struct mbr_s));
