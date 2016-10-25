@@ -10,16 +10,28 @@ void goto_sector(unsigned int cylinder, unsigned int sector) {
 }
 
 void read_sector(unsigned int cylinder, unsigned int sector, unsigned char *buffer) {
+  read_sector_n(cylinder, sector, buffer, SECTORSIZE);
+}
+
+void read_sector_n(unsigned int cylinder, unsigned int sector, unsigned char *buffer, unsigned int buffersize) {
+  if(buffersize >= SECTORSIZE){
+    printf("Impossible de lire plus de %d octets sur un secteur\n", SECTORSIZE);
+    exit(1);
+  }
   goto_sector(cylinder, sector);
   _out(HDA_DATAREGS, 0);
   _out(HDA_DATAREGS + 1, 1);
   _out(HDA_CMDREG, CMD_READ);
   _sleep(HDA_IRQ);
-  memcpy(buffer, MASTERBUFFER, SECTORSIZE);
+  memcpy(buffer, MASTERBUFFER, buffersize);
 }
 
 void write_sector(unsigned int cylinder, unsigned int sector, const unsigned char *buffer) {
-  memcpy(MASTERBUFFER, buffer, SECTORSIZE);
+  write_sector_n(cylinder, sector, buffer, SECTORSIZE);
+}
+
+void write_sector_n(unsigned int cylinder, unsigned int sector, const unsigned char *buffer, unsigned int buffersize) {
+  memcpy(MASTERBUFFER, buffer, buffersize);
   goto_sector(cylinder, sector);
   _out(HDA_DATAREGS, 0);
   _out(HDA_DATAREGS + 1, 1);
