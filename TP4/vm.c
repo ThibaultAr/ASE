@@ -84,9 +84,12 @@ new(struct _cmd *c) {
 
   read_mbr();
 
-  scanf("Taille (en secteurs): %u\n", &vol.vol_nSector);
-  scanf("Indice cylindre: %u\n", &vol.vol_first_cylinder);
-  scanf("Indice secteur: %u\n", &vol.vol_first_sector);
+  printf("Taille (en secteurs): \n");
+  scanf("%u", &vol.vol_nSector);
+  printf("Indice cylindre: \n");
+  scanf("%u", &vol.vol_first_cylinder);
+  printf("Indice secteur: \n");
+  scanf("%u", &vol.vol_first_sector);
 
   vol.vol_type = VOL_BASIC;
   mbr.mbr_vols[mbr.mbr_nVol++] = vol;

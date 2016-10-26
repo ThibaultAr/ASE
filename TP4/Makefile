@@ -13,11 +13,11 @@ LIBS    = -L$(LIBDIR) -lhardware
 ###------------------------------
 ### Main targets
 ###------------------------------------------------------------
-BINARIES= mkhd
+BINARIES= mkhd vm
 OBJECTS	= $(addsuffix .o,\
 	  mkhd)
 
-all: $(BINARIES) $(OBJECTS) drive.o mbr.o vm
+all: $(BINARIES) $(OBJECTS) drive.o mbr.o
 
 
 ###------------------------------
