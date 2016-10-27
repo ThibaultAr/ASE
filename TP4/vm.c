@@ -95,8 +95,8 @@ list(struct _cmd *c) {
               mbr.mbr_vols[i].vol_first_cylinder,
               mbr.mbr_vols[i].vol_first_sector,
               mbr.mbr_vols[i].vol_nSector,
-              cylinder_of_bloc(i, mbr.mbr_vols[i].vol_nSector + mbr.mbr_vols[i].vol_first_sector),
-              sector_of_bloc(i, mbr.mbr_vols[i].vol_nSector + mbr.mbr_vols[i].vol_first_sector),
+              cylinder_of_bloc(i, mbr.mbr_vols[i].vol_nSector),
+              sector_of_bloc(i, mbr.mbr_vols[i].vol_nSector),
               type_to_string(mbr.mbr_vols[i].vol_type));
     }
 }
@@ -104,7 +104,7 @@ list(struct _cmd *c) {
 static void
 new(struct _cmd *c) {
   struct volume_s vol;
-  int i;
+  int i, indiceEnd;
 
   printf("Taille (en secteurs): \n");
   scanf("%u", &vol.vol_nSector);
@@ -115,14 +115,18 @@ new(struct _cmd *c) {
 
   vol.vol_type = VOL_BASIC;
 
+  indiceEnd = vol.vol_first_cylinder * SECTORS + (vol.vol_first_cylinder + vol.vol_nSector);
+
   for(i = 0; i < mbr.mbr_nVol; i++) {
     int iCylinder, iSector;
 
-    iCylinder = cylinder_of_bloc(i, mbr.mbr_vols[i].vol_nSector + mbr.mbr_vols[i].vol_first_sector);
-    iSector = sector_of_bloc(i, mbr.mbr_vols[i].vol_nSector + mbr.mbr_vols[i].vol_first_sector);
+    iCylinder = cylinder_of_bloc(i, mbr.mbr_vols[i].vol_nSector);
+    iSector = sector_of_bloc(i, mbr.mbr_vols[i].vol_nSector);
 
-    if(vol.vol_first_cylinder * vol.vol_first_sector >= mbr.mbr_vols[i].vol_first_cylinder * SECTORS + mbr.mbr_vols[i].vol_first_sector
-       && vol.vol_first_cylinder * vol.vol_first_sector < iCylinder * SECTORS + iSector ) {
+    if((vol.vol_first_cylinder * SECTORS + vol.vol_first_sector >= mbr.mbr_vols[i].vol_first_cylinder * SECTORS + mbr.mbr_vols[i].vol_first_sector
+        && vol.vol_first_cylinder * SECTORS + vol.vol_first_sector < iCylinder * SECTORS + iSector) ||
+        (mbr.mbr_vols[i].vol_first_cylinder * SECTORS + mbr.mbr_vols[i].vol_first_sector > vol.vol_first_cylinder * SECTORS + vol.vol_first_sector
+        && mbr.mbr_vols[i].vol_first_cylinder * SECTORS + mbr.mbr_vols[i].vol_first_sector < indiceEnd)) {
       printf("Impossible de creer un volume ici : il existe deja un volume a cette emplacement\n");
       return;
     }
