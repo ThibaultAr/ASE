@@ -28,3 +28,7 @@ void write_mbr();
 void read_bloc(int numVol, int numBloc, unsigned char *buffer);
 
 void write_bloc(int numVol, int numBloc, unsigned char *buffer);
+
+int sector_of_bloc(int numVol, int numBloc);
+
+int cylinder_of_bloc(int numVol, int numBloc);

@@ -69,20 +69,41 @@ loop(void)
 	execute(name) ;
 }
 
+static const char* type_to_string(int type) {
+  switch (type) {
+    case VOL_BASIC:
+      return "base";
+    case VOL_ANX:
+      return "annexe";
+    default:
+      return "other";
+  }
+}
+
 /* ------------------------------
    command execution
    ------------------------------------------------------------*/
 static void
-list(struct _cmd *c)
-{
-    printf("%s NYI\n", c->name);
+list(struct _cmd *c) {
+    int i;
+
+    printf("%d volumes\n", mbr.mbr_nVol);
+
+    for(i = 0; i < mbr.mbr_nVol; i++) {
+      /* (cDebut, sDebut) tailleVolume (cFin, sFin) type */
+      printf("(%d, %d)\t%d\t->\t(%d, %d)\t%s\n",
+              mbr.mbr_vols[i].vol_first_cylinder,
+              mbr.mbr_vols[i].vol_first_sector,
+              mbr.mbr_vols[i].vol_nSector,
+              cylinder_of_bloc(i, mbr.mbr_vols[i].vol_nSector + mbr.mbr_vols[i].vol_first_sector),
+              sector_of_bloc(i, mbr.mbr_vols[i].vol_nSector + mbr.mbr_vols[i].vol_first_sector),
+              type_to_string(mbr.mbr_vols[i].vol_type));
+    }
 }
 
 static void
 new(struct _cmd *c) {
   struct volume_s vol;
-
-  read_mbr();
 
   printf("Taille (en secteurs): \n");
   scanf("%u", &vol.vol_nSector);
@@ -93,8 +114,6 @@ new(struct _cmd *c) {
 
   vol.vol_type = VOL_BASIC;
   mbr.mbr_vols[mbr.mbr_nVol++] = vol;
-
-  write_mbr();
 }
 
 static void
@@ -161,6 +180,8 @@ main(int argc, char **argv)
 
   /* Allows all IT */
   _mask(1);
+
+  read_mbr();
 
   /* dialog with user */
   loop();
