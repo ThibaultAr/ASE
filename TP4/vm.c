@@ -123,9 +123,9 @@ del(struct _cmd *c)
 }
 
 static void
-save(struct _cmd *c)
-{
-    printf("%s NYI\n", c->name);
+save(struct _cmd *c) {
+    write_mbr();
+    printf("mbr sauve\n");
 }
 
 static void
