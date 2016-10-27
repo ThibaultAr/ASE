@@ -131,7 +131,7 @@ save(struct _cmd *c) {
 static void
 quit(struct _cmd *c)
 {
-    printf("%s NYI\n", c->name);
+    execute("save");
     exit(EXIT_SUCCESS);
 }
 
