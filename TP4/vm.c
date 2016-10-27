@@ -117,9 +117,17 @@ new(struct _cmd *c) {
 }
 
 static void
-del(struct _cmd *c)
-{
-    printf("%s NYI\n", c->name);
+del(struct _cmd *c) {
+    int indice;
+
+    printf("Volume a supprimer :\n");
+    scanf("%d", &indice);
+
+    if(indice < mbr.mbr_nVol - 1) {
+      mbr.mbr_vols[indice] = mbr.mbr_vols[mbr.mbr_nVol - 1];
+    }
+
+    mbr.mbr_nVol--;
 }
 
 static void
