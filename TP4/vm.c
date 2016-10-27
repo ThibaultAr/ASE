@@ -104,6 +104,7 @@ list(struct _cmd *c) {
 static void
 new(struct _cmd *c) {
   struct volume_s vol;
+  int i;
 
   printf("Taille (en secteurs): \n");
   scanf("%u", &vol.vol_nSector);
@@ -113,6 +114,20 @@ new(struct _cmd *c) {
   scanf("%u", &vol.vol_first_sector);
 
   vol.vol_type = VOL_BASIC;
+
+  for(i = 0; i < mbr.mbr_nVol; i++) {
+    int iCylinder, iSector;
+
+    iCylinder = cylinder_of_bloc(i, mbr.mbr_vols[i].vol_nSector + mbr.mbr_vols[i].vol_first_sector);
+    iSector = sector_of_bloc(i, mbr.mbr_vols[i].vol_nSector + mbr.mbr_vols[i].vol_first_sector);
+
+    if(vol.vol_first_cylinder * vol.vol_first_sector >= mbr.mbr_vols[i].vol_first_cylinder * SECTORS + mbr.mbr_vols[i].vol_first_sector
+       && vol.vol_first_cylinder * vol.vol_first_sector < iCylinder * SECTORS + iSector ) {
+      printf("Impossible de creer un volume ici : il existe deja un volume a cette emplacement\n");
+      return;
+    }
+  }
+
   mbr.mbr_vols[mbr.mbr_nVol++] = vol;
 }
 

@@ -53,3 +53,27 @@ Volume a supprimer :
 > list
 0 volumes
 ```
+
+---
+
+- Créer une nouveau volume
+- Création d'un nouveau volume dans un emplacement où il existe déjà un volume
+
+```
+$ ./vm
+> new
+Taille (en secteurs):
+16
+Indice cylindre:
+0
+Indice secteur:
+0
+> new
+Taille (en secteurs):
+16
+Indice cylindre:
+0
+Indice secteur:
+1
+Impossible de creer un volume ici : il existe deja un volume a cette emplacement
+```
