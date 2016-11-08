@@ -1,8 +1,8 @@
 # $Id: Makefile,v 1.2 2004/10/12 09:06:17 marquet Exp $
 ##############################################################################
 
-ROOTDIR=/home/dubois/FIL/M1S1/ASE/libhardware
-#ROOTDIR=/home/enseign/ASE
+#ROOTDIR=/home/dubois/FIL/M1S1/ASE/libhardware
+ROOTDIR=/home/enseign/ASE
 
 CC	= gcc
 CFLAGS	= -Wall -ansi -pedantic -m32
@@ -18,7 +18,7 @@ BINARIES= mkhd vm
 OBJECTS	= $(addsuffix .o,\
 	  mkhd)
 
-all: $(BINARIES) $(OBJECTS) drive.o mbr.o
+all: $(BINARIES) $(OBJECTS) drive.o mbr.o bloc.o
 
 
 ###------------------------------
@@ -47,6 +47,9 @@ vm.o: vm.c
 
 vm: vm.o mbr.o drive.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
+
+bloc.o: bloc.c mbr.h
+	$(CC) $(CFLAGS) -c bloc.c $(INCDIR)
 
 ###------------------------------
 ### Misc.
