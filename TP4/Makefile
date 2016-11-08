@@ -14,11 +14,11 @@ LIBS    = -L$(LIBDIR) -lhardware
 ###------------------------------
 ### Main targets
 ###------------------------------------------------------------
-BINARIES= mkhd vm
+BINARIES= mkhd vm mknfs
 OBJECTS	= $(addsuffix .o,\
 	  mkhd)
 
-all: $(BINARIES) $(OBJECTS) drive.o mbr.o bloc.o
+all: $(BINARIES) $(OBJECTS)
 
 
 ###------------------------------
@@ -42,10 +42,22 @@ mkvol.o: mkvol.c mbr.h
 mkvol: mkvol.o mbr.o
 	$(CC) $(CFLAGS) -o mkvol $^ $(LIBS)
 
+tools.o: tools.c
+	$(CC) $(CFLAGS) -c tools.c $(INCDIR)
+
+current.o: current.c tools.h bloc.h
+	$(CC) $(CFLAGS) -c current.c $(INCDIR)
+
 vm.o: vm.c
 	$(CC) $(CFLAGS) -c vm.c $(INCDIR)
 
 vm: vm.o mbr.o drive.o
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
+
+mknfs.o: mknfs.c
+	$(CC) $(CFLAGS) -c mknfs.c $(INCDIR)
+
+mknfs: mknfs.o mbr.o drive.o current.o tools.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 bloc.o: bloc.c mbr.h
