@@ -123,6 +123,7 @@ new(struct _cmd *c) {
     iCylinder = cylinder_of_bloc(i, mbr.mbr_vols[i].vol_nSector);
     iSector = sector_of_bloc(i, mbr.mbr_vols[i].vol_nSector);
 
+    /* Chaque calcul permet de retrouver la position des premiers et derniers secteur dans le tableau représentant le disque */
     if((vol.vol_first_cylinder * SECTORS + vol.vol_first_sector >= mbr.mbr_vols[i].vol_first_cylinder * SECTORS + mbr.mbr_vols[i].vol_first_sector
         && vol.vol_first_cylinder * SECTORS + vol.vol_first_sector < iCylinder * SECTORS + iSector) ||
         (mbr.mbr_vols[i].vol_first_cylinder * SECTORS + mbr.mbr_vols[i].vol_first_sector > vol.vol_first_cylinder * SECTORS + vol.vol_first_sector
