@@ -57,7 +57,7 @@ vm: vm.o mbr.o drive.o
 mknfs.o: mknfs.c
 	$(CC) $(CFLAGS) -c mknfs.c $(INCDIR)
 
-mknfs: mknfs.o mbr.o drive.o current.o tools.o
+mknfs: mknfs.o mbr.o drive.o bloc.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 bloc.o: bloc.c mbr.h
