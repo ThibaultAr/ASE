@@ -1,6 +1,6 @@
 #include "bloc.h"
 
-static struct super_s super;
+struct super_s super;
 static unsigned int current_vol;
 
 void init_super(unsigned int vol) {
@@ -16,7 +16,7 @@ void init_super(unsigned int vol) {
   fb.fb_nblocs = mbr.mbr_vols[vol].vol_nSector - 1;
   fb.fb_next = 0;
 
-  write_bloc_n(vol, 0, (unsigned char *) &fb, sizeof(struct freeBloc_s));
+  write_bloc_n(vol, 1, (unsigned char *) &fb, sizeof(struct freeBloc_s));
 }
 
 int load_super(unsigned int vol) {
@@ -60,4 +60,5 @@ void free_bloc (unsigned int bloc) {
   write_bloc_n(current_vol, bloc, (unsigned char *) &fb, sizeof(struct freeBloc_s));
 
   super.super_firstFree = bloc;
+  super.super_nFree++;
 }
