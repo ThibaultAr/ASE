@@ -21,6 +21,8 @@ struct mbr_s {
   unsigned int mbr_magic;
 };
 
+#define load_mbr read_mbr
+
 int read_mbr();
 
 void write_mbr();

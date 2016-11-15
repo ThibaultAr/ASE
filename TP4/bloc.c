@@ -1,7 +1,6 @@
 #include "bloc.h"
 
 struct super_s super;
-static unsigned int current_vol;
 
 void init_super(unsigned int vol) {
   struct freeBloc_s fb;
@@ -20,14 +19,14 @@ void init_super(unsigned int vol) {
 }
 
 int load_super(unsigned int vol) {
-  current_vol = vol;
-  read_bloc_n(current_vol, 0, (unsigned char *) &super, sizeof(struct super_s));
+  current_volume = vol;
+  read_bloc_n(current_volume, 0, (unsigned char *) &super, sizeof(struct super_s));
 
   return super.super_magic == SUPERMAGIC;
 }
 
 void save_super() {
-  write_bloc_n(current_vol, 0, (unsigned char *) &super, sizeof(struct super_s));
+  write_bloc_n(current_volume, 0, (unsigned char *) &super, sizeof(struct super_s));
 }
 
 unsigned int new_bloc() {
@@ -38,12 +37,12 @@ unsigned int new_bloc() {
 
   freeBloc = super.super_firstFree;
   super.super_nFree--;
-  read_bloc_n(current_vol, super.super_firstFree, (unsigned char *) &fb, sizeof(struct freeBloc_s));
+  read_bloc_n(current_volume, super.super_firstFree, (unsigned char *) &fb, sizeof(struct freeBloc_s));
 
   if(fb.fb_nblocs > 1) {
     super.super_firstFree++;
     fb.fb_nblocs--;
-    write_bloc_n(current_vol, super.super_firstFree, (unsigned char *) &fb, sizeof(struct freeBloc_s));
+    write_bloc_n(current_volume, super.super_firstFree, (unsigned char *) &fb, sizeof(struct freeBloc_s));
   } else {
     super.super_firstFree = fb.fb_next;
   }
@@ -57,26 +56,27 @@ void free_bloc (unsigned int bloc) {
   fb.fb_next = super.super_firstFree;
   fb.fb_nblocs = 1;
 
-  write_bloc_n(current_vol, bloc, (unsigned char *) &fb, sizeof(struct freeBloc_s));
+  write_bloc_n(current_volume, bloc, (unsigned char *) &fb, sizeof(struct freeBloc_s));
 
   super.super_firstFree = bloc;
   super.super_nFree++;
 }
 
-void read_inode(unsigned int inumber, struct inode_s inode){
-  read_bloc_n(current_vol, inumber, &inode, sizeof(struct inode_s));
+void read_inode(unsigned int inumber, struct inode_s * inode){
+  read_bloc_n(current_volume, inumber, (unsigned char *) &inode, sizeof(struct inode_s));
 }
 
-void write_inode(unsigned int inumber, struct inode_s inode){
-  write_bloc_n(current_vol, inumber, &inode, sizeof(struct inode_s));
+void write_inode(unsigned int inumber, struct inode_s * inode){
+  write_bloc_n(current_volume, inumber, (unsigned char *) &inode, sizeof(struct inode_s));
 }
 
 unsigned int create_inode(enum file_type_e type){
   struct inode_s inode;
   unsigned int bloc;
+  int i;
   inode.i_type = type;
   inode.i_size = 0;
-  for(int i = 0; i < NDIRECT; i++)
+  for(i = 0; i < NDIRECT; i++)
     inode.i_direct[i] = 0;
   inode.i_indirect = 0;
   inode.i_2indirect = 0;
@@ -87,30 +87,32 @@ unsigned int create_inode(enum file_type_e type){
 }
 
 void free_blocs(unsigned int blocs[], unsigned int size){
-    for(int i = 0; i < size; i++)
+    int i;
+    for(i = 0; i < size; i++)
       if(blocs[i])
         free_bloc(blocs[i]);
 }
 
-void delete_inode(unsigned int inumber){
+int delete_inode(unsigned int inumber){
     struct inode_s inode;
     read_inode(inumber, &inode);
 
     free_blocs(inode.i_direct, NDIRECT);
     if(inode.i_indirect){
       unsigned int bloc[NNBPB];
-      read_bloc_n(current_vol, inode.i_indirect, bloc, sizeof(unsigned int));
+      read_bloc_n(current_volume, inode.i_indirect, (unsigned char *) bloc, sizeof(unsigned int));
       free_blocs(bloc, NNBPB);
-      free_bloc(inode.inode_indirect);
+      free_bloc(inode.i_indirect);
     }
 
     if(inode.i_2indirect){
       unsigned int bloc2[NNBPB];
-      read_bloc_n(current_vol, inode.i_2indirect, bloc2, sizeof(unsigned int));
-      for(int b = 0; b < NNBPB; b++){
+      int b;
+      read_bloc_n(current_volume, inode.i_2indirect, (unsigned char *) bloc2, sizeof(unsigned int));
+      for(b = 0; b < NNBPB; b++){
         if(bloc2[b]){
           unsigned int bloc[NNBPB];
-          read_bloc_n(current_vol, bloc2[b], bloc, sizeof(unsigned int));
+          read_bloc_n(current_volume, bloc2[b], (unsigned char *) bloc, sizeof(unsigned int));
           free_blocs(bloc, NNBPB);
           free_bloc(bloc2[b]);
         }
@@ -118,9 +120,10 @@ void delete_inode(unsigned int inumber){
       free_bloc(inode.i_2indirect);
     }
     free_bloc(inumber);
+  return 0;
 }
 
-unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc) {
+unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc, int do_allocate) {
   struct inode_s inode;
   read_inode(inumber, &inode);
   if(fbloc < NDIRECT)

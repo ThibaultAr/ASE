@@ -17,7 +17,7 @@ LIBS    = -L$(LIBDIR) -lhardware
 
 BINARIES= mkhd vm mknfs alloclib if_pfile if_nfile if_cfile if_dfile
 OBJECTS	= $(addsuffix .o,\
-	  mkhd tools ifile mount)
+	  tools ifile mount)
 
 all: $(BINARIES) $(OBJECTS)
 
@@ -80,22 +80,22 @@ if_dfile : if_dfile.o $(OBJECTS)
 if_pfile : if_pfile.o $(OBJECTS)
 
 % : %.o
-	$(CC) -o $@ $^ -L$(LIBDIR) $(LIBS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 ###------------------------------
 ### #include dependences
 ###------------------------------------------------------------
 # you may fill these lines with "make depend"
-if_cfile.o: if_cfile.c ifile.h inode.h tools.h mount.h
-if_dfile.o: if_dfile.c ifile.h inode.h tools.h mount.h
-if_nfile.o: if_nfile.c ifile.h inode.h tools.h mount.h
-if_pfile.o: if_pfile.c ifile.h inode.h tools.h mount.h
-ifile.o: ifile.c inode.h tools.h ifile.h
-#mount.o: mount.c config.h tools.h
+if_cfile.o: if_cfile.c ifile.h bloc.h tools.h mount.h
+if_dfile.o: if_dfile.c ifile.h bloc.h tools.h mount.h
+if_nfile.o: if_nfile.c ifile.h bloc.h tools.h mount.h
+if_pfile.o: if_pfile.c ifile.h bloc.h tools.h mount.h
+ifile.o: ifile.c bloc.h tools.h ifile.h
+mount.o: mount.c bloc.h
 tools.o: tools.c tools.h
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS) -c $< $(INCDIR)
 
 ###------------------------------
 ### Misc.

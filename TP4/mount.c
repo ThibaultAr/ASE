@@ -13,15 +13,8 @@
 #include <errno.h>
 
 #include "hardware.h"
-#include "config.h"
-#include "tools.h"
 
-#ifdef SOL
-#   include "mbr+sol.h"
-#   include "super+sol.h"
-#else
-#   error "Add your own include directives"
-#endif
+unsigned int current_volume;
 
 /* load super bloc of the $CURRENT_VOLUME
    set current_volume accordingly */

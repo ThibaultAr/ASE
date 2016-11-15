@@ -6,6 +6,7 @@
    Philippe Marquet, Nov 2009
 
 */
+#include "bloc.h"
 
 #ifndef _MOUNT_H_
 #define _MOUNT_H_
