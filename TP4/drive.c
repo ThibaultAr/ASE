@@ -14,7 +14,7 @@ void read_sector(unsigned int cylinder, unsigned int sector, unsigned char *buff
 }
 
 void read_sector_n(unsigned int cylinder, unsigned int sector, unsigned char *buffer, unsigned int buffersize) {
-  if(buffersize >= SECTORSIZE){
+  if(buffersize > SECTORSIZE){
     printf("Impossible de lire plus de %d octets sur un secteur\n", SECTORSIZE);
     exit(1);
   }

@@ -14,7 +14,8 @@ LIBS    = -L$(LIBDIR) -lhardware
 ###------------------------------
 ### Main targets
 ###------------------------------------------------------------
-BINARIES= mkhd vm mknfs if_pfile if_nfile if_cfile if_dfile
+
+BINARIES= mkhd vm mknfs alloclib if_pfile if_nfile if_cfile if_dfile
 OBJECTS	= $(addsuffix .o,\
 	  mkhd tools ifile mount)
 
@@ -48,20 +49,27 @@ tools.o: tools.c
 current.o: current.c tools.h bloc.h
 	$(CC) $(CFLAGS) -c current.c $(INCDIR)
 
+bloc.o: bloc.c mbr.h
+	$(CC) $(CFLAGS) -c bloc.c $(INCDIR)
+
+mknfs.o: mknfs.c
+	$(CC) $(CFLAGS) -c mknfs.c $(INCDIR)
+
+alloclib.o: alloclib.c
+	$(CC) $(CFLAGS) -c alloclib.c $(INCDIR)
+
 vm.o: vm.c
 	$(CC) $(CFLAGS) -c vm.c $(INCDIR)
 
 vm: vm.o mbr.o drive.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
-mknfs.o: mknfs.c
-	$(CC) $(CFLAGS) -c mknfs.c $(INCDIR)
-
-mknfs: mknfs.o mbr.o drive.o current.o tools.o
+mknfs: mknfs.o mbr.o drive.o bloc.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
-bloc.o: bloc.c mbr.h
-	$(CC) $(CFLAGS) -c bloc.c $(INCDIR)
+alloclib: alloclib.o mbr.o drive.o bloc.o
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
+
 
 ###------------------------------
 ### Binaries

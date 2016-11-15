@@ -44,6 +44,14 @@ void read_bloc(int numVol, int numBloc, unsigned char *buffer) {
   read_sector(cylinder_of_bloc(numVol, numBloc), sector_of_bloc(numVol, numBloc), buffer);
 }
 
+void read_bloc_n(int numVol, int numBloc, unsigned char *buffer, int size) {
+  read_sector_n(cylinder_of_bloc(numVol, numBloc), sector_of_bloc(numVol, numBloc), buffer, size);
+}
+
 void write_bloc(int numVol, int numBloc, unsigned char *buffer) {
   write_sector(cylinder_of_bloc(numVol, numBloc), sector_of_bloc(numVol, numBloc), buffer);
+}
+
+void write_bloc_n(int numVol, int numBloc, unsigned char *buffer, int size) {
+  write_sector_n(cylinder_of_bloc(numVol, numBloc), sector_of_bloc(numVol, numBloc), buffer, size);
 }

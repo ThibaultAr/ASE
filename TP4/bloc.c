@@ -1,6 +1,6 @@
 #include "bloc.h"
 
-static struct super_s super;
+struct super_s super;
 static unsigned int current_vol;
 
 void init_super(unsigned int vol) {
@@ -8,26 +8,26 @@ void init_super(unsigned int vol) {
 
   super.super_magic = SUPERMAGIC;
   super.super_firstFree = 1;
-  super.super_nFree = mbr.mbr_vols[current_vol].vol_nSector - 1;
+  super.super_nFree = mbr.mbr_vols[vol].vol_nSector - 1;
   super.super_root = 0;
 
   save_super();
 
-  fb.fb_nblocs = mbr.mbr_vols[current_vol].vol_nSector - 1;
+  fb.fb_nblocs = mbr.mbr_vols[vol].vol_nSector - 1;
   fb.fb_next = 0;
 
-  write_bloc(current_vol, 0, (unsigned char *) &fb);
+  write_bloc_n(vol, 1, (unsigned char *) &fb, sizeof(struct freeBloc_s));
 }
 
 int load_super(unsigned int vol) {
   current_vol = vol;
-  read_bloc(current_vol, vol, (unsigned char *) &super);
+  read_bloc_n(current_vol, 0, (unsigned char *) &super, sizeof(struct super_s));
 
   return super.super_magic == SUPERMAGIC;
 }
 
 void save_super() {
-  write_bloc(current_vol, 0, (unsigned char *) &super);
+  write_bloc_n(current_vol, 0, (unsigned char *) &super, sizeof(struct super_s));
 }
 
 unsigned int new_bloc() {
@@ -38,12 +38,12 @@ unsigned int new_bloc() {
 
   freeBloc = super.super_firstFree;
   super.super_nFree--;
-  read_bloc(current_vol, super.super_firstFree, (unsigned char *) &fb);
+  read_bloc_n(current_vol, super.super_firstFree, (unsigned char *) &fb, sizeof(struct freeBloc_s));
 
   if(fb.fb_nblocs > 1) {
     super.super_firstFree++;
     fb.fb_nblocs--;
-    write_bloc(current_vol, super.super_firstFree, (unsigned char *) &fb);
+    write_bloc_n(current_vol, super.super_firstFree, (unsigned char *) &fb, sizeof(struct freeBloc_s));
   } else {
     super.super_firstFree = fb.fb_next;
   }
@@ -57,25 +57,18 @@ void free_bloc (unsigned int bloc) {
   fb.fb_next = super.super_firstFree;
   fb.fb_nblocs = 1;
 
-  write_bloc(current_vol, bloc, (unsigned char *) &fb);
+  write_bloc_n(current_vol, bloc, (unsigned char *) &fb, sizeof(struct freeBloc_s));
 
   super.super_firstFree = bloc;
-}
-
-void read_bloc_n(unsigned int nBloc, unsigned char * buffer, unsigned int size){
-  read_sector_n(cylinder_of_bloc(current_vol, nBloc), sector_of_bloc(current_vol, nBloc), buffer, size);
-}
-
-void write_bloc_n(unsigned int nBloc, unsigned char * buffer, unsigned int size){
-  write_sector_n(cylinder_of_bloc(current_vol, nBloc), sector_of_bloc(current_vol, nBloc), buffer, size);
+  super.super_nFree++;
 }
 
 void read_inode(unsigned int inumber, struct inode_s inode){
-  read_bloc_n(inumber, &inode, sizeof(struct inode_s));
+  read_bloc_n(current_vol, inumber, &inode, sizeof(struct inode_s));
 }
 
 void write_inode(unsigned int inumber, struct inode_s inode){
-  write_bloc_n(inumber, &inode, sizeof(struct inode_s));
+  write_bloc_n(current_vol, inumber, &inode, sizeof(struct inode_s));
 }
 
 unsigned int create_inode(enum file_type_e type){
@@ -106,18 +99,18 @@ void delete_inode(unsigned int inumber){
     free_blocs(inode.i_direct, NDIRECT);
     if(inode.i_indirect){
       unsigned int bloc[NNBPB];
-      read_bloc_n(inode.i_indirect, bloc, sizeof(unsigned int));
+      read_bloc_n(current_vol, inode.i_indirect, bloc, sizeof(unsigned int));
       free_blocs(bloc, NNBPB);
       free_bloc(inode.inode_indirect);
     }
 
     if(inode.i_2indirect){
       unsigned int bloc2[NNBPB];
-      read_bloc_n(inode.i_2indirect, bloc2, sizeof(unsigned int));
+      read_bloc_n(current_vol, inode.i_2indirect, bloc2, sizeof(unsigned int));
       for(int b = 0; b < NNBPB; b++){
         if(bloc2[b]){
           unsigned int bloc[NNBPB];
-          read_bloc_n(bloc2[b], bloc, sizeof(unsigned int));
+          read_bloc_n(current_vol, bloc2[b], bloc, sizeof(unsigned int));
           free_blocs(bloc, NNBPB);
           free_bloc(bloc2[b]);
         }
