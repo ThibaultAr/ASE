@@ -13,6 +13,7 @@
 #include <errno.h>
 
 #include "hardware.h"
+#include "mount.h"
 
 unsigned int current_volume;
 

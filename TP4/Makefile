@@ -1,8 +1,8 @@
 # $Id: Makefile,v 1.2 2004/10/12 09:06:17 marquet Exp $
 ##############################################################################
 
-#ROOTDIR=/home/dubois/FIL/M1S1/ASE/libhardware
-ROOTDIR=/home/enseign/ASE
+ROOTDIR=/home/dubois/FIL/M1S1/ASE/libhardware
+#ROOTDIR=/home/enseign/ASE
 
 CC	= gcc
 CFLAGS	= -Wall -ansi -pedantic -m32
@@ -74,10 +74,10 @@ alloclib: alloclib.o mbr.o drive.o bloc.o
 ###------------------------------
 ### Binaries
 ###------------------------------------------------------------
-if_cfile : if_cfile.o $(OBJECTS)
-if_nfile : if_nfile.o $(OBJECTS)
-if_dfile : if_dfile.o $(OBJECTS)
-if_pfile : if_pfile.o $(OBJECTS)
+if_cfile : drive.o mbr.o bloc.o if_cfile.o $(OBJECTS)
+if_nfile : drive.o mbr.o bloc.o if_nfile.o $(OBJECTS)
+if_dfile : drive.o mbr.o bloc.o if_dfile.o $(OBJECTS)
+if_pfile : drive.o mbr.o bloc.o if_pfile.o $(OBJECTS)
 
 % : %.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)

@@ -6,10 +6,11 @@
    Philippe Marquet, Nov 2009
 
 */
-#include "bloc.h"
 
-#ifndef _MOUNT_H_
-#define _MOUNT_H_
+#ifndef MY_MOUNT_H_
+#define MY_MOUNT_H_
+#include "bloc.h"
+#include "tools.h"
 
 /*  initialize hardware, mount the "current" volume
     configuration with the $HW_CONFIG and $CURRENT_VOLUME environment

@@ -1,3 +1,6 @@
+#ifndef BLOCK_H_
+#define BLOCK_H_
+
 #define SUPERMAGIC 0xFE55E
 #define SUPER 0
 #define NDIRECT 10
@@ -56,3 +59,4 @@ int delete_inode(unsigned int inumber);
    allocation was possible.  */
 unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc,
                             int do_allocate);
+#endif

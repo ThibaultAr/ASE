@@ -7,11 +7,11 @@
    Philippe Marquet, october 2009
 
 */
-#include "bloc.h"
 
 #ifndef _IFILE_H_
 #define _IFILE_H_
 
+#include "bloc.h"
 
 /* Despite the user does not need these definitions, our first
    implementation allocates file descriptors in the user space. Thus

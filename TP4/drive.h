@@ -1,3 +1,6 @@
+#ifndef DRIVE_H_
+#define DRIVE_H_
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,3 +25,5 @@ void write_sector_n(unsigned int cylinder, unsigned int sector, const unsigned c
 void format_sector(unsigned int cylinder, unsigned int sector, unsigned int nsector, unsigned int value);
 
 void check_dskinfo(unsigned int cylinder, unsigned int sector);
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef MBR_H_
+#define MBR_H_
+
 #include "drive.h"
 
 #define MAX_VOLUMES 5
@@ -38,3 +41,5 @@ void write_bloc_n(int numVol, int numBloc, unsigned char *buffer, int size);
 int sector_of_bloc(int numVol, int numBloc);
 
 int cylinder_of_bloc(int numVol, int numBloc);
+
+#endif
