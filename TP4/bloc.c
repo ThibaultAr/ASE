@@ -63,7 +63,6 @@ void free_bloc (unsigned int bloc) {
 }
 
 void read_inode(unsigned int inumber, struct inode_s * inode){
-
   read_bloc_n(current_volume, inumber, (unsigned char *) inode, sizeof(struct inode_s));
 }
 
@@ -95,33 +94,39 @@ void free_blocs(unsigned int blocs[], unsigned int size){
 }
 
 int delete_inode(unsigned int inumber){
-    struct inode_s inode;
-    read_inode(inumber, &inode);
+  struct inode_s inode;
+  read_inode(inumber, &inode);
 
-    free_blocs(inode.i_direct, NDIRECT);
-    if(inode.i_indirect){
-      unsigned int bloc[NNBPB];
-      read_bloc_n(current_volume, inode.i_indirect, (unsigned char *) bloc, sizeof(unsigned int));
-      free_blocs(bloc, NNBPB);
-      free_bloc(inode.i_indirect);
-    }
+  free_blocs(inode.i_direct, NDIRECT);
+  if(inode.i_indirect){
+    unsigned int bloc[NNBPB];
+    read_bloc_n(current_volume, inode.i_indirect, (unsigned char *) bloc, sizeof(unsigned int));
+    free_blocs(bloc, NNBPB);
+    free_bloc(inode.i_indirect);
+  }
 
-    if(inode.i_2indirect){
-      unsigned int bloc2[NNBPB];
-      int b;
-      read_bloc_n(current_volume, inode.i_2indirect, (unsigned char *) bloc2, sizeof(unsigned int));
-      for(b = 0; b < NNBPB; b++){
-        if(bloc2[b]){
-          unsigned int bloc[NNBPB];
-          read_bloc_n(current_volume, bloc2[b], (unsigned char *) bloc, sizeof(unsigned int));
-          free_blocs(bloc, NNBPB);
-          free_bloc(bloc2[b]);
-        }
+  if(inode.i_2indirect){
+    unsigned int bloc2[NNBPB];
+    int b;
+    read_bloc_n(current_volume, inode.i_2indirect, (unsigned char *) bloc2, sizeof(unsigned int));
+    for(b = 0; b < NNBPB; b++){
+      if(bloc2[b]){
+        unsigned int bloc[NNBPB];
+        read_bloc_n(current_volume, bloc2[b], (unsigned char *) bloc, sizeof(unsigned int));
+        free_blocs(bloc, NNBPB);
+        free_bloc(bloc2[b]);
       }
-      free_bloc(inode.i_2indirect);
     }
-    free_bloc(inumber);
+    free_bloc(inode.i_2indirect);
+  }
+  free_bloc(inumber);
   return 0;
+}
+
+unsigned int new_bloc_zero() {
+  int bloc = new_bloc();
+  format_bloc(current_volume, bloc);
+  return bloc;
 }
 
 unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc, int do_allocate) {
@@ -129,12 +134,35 @@ unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc, int do_all
   read_inode(inumber, &inode);
   if(fbloc < NDIRECT) {
     if(do_allocate && !inode.i_direct[fbloc]) {
-      int newBlock = new_bloc();
+      unsigned int newBlock = new_bloc_zero();
       if(newBlock != 0) {
         inode.i_direct[fbloc] = newBlock;
         write_inode(inumber, &inode);
       }
-      return inode.i_direct[fbloc];
     }
+    return inode.i_direct[fbloc];
+  }
+
+  fbloc -= NDIRECT;
+
+  if(fbloc < NNBPB) {
+    unsigned int bloc[NNBPB];
+    if(do_allocate && !inode.i_indirect) {
+      int i;
+      unsigned int newBlock = new_bloc_zero();
+      if(newBlock != 0) {
+        inode.i_indirect = newBlock;
+        for(i = 0; i < NNBPB; i++) {
+          unsigned int newBlock1 = new_bloc_zero();
+          if(newBlock1 != 0) {
+            bloc[i] = newBlock1;
+          }
+        }
+        write_bloc_n(current_volume, inode.i_indirect, (unsigned char *) bloc, sizeof(unsigned int));
+        write_inode(inumber, &inode);
+      }
+    }
+    read_bloc_n(current_volume, inode.i_indirect, bloc, sizeof(unsigned int));
+    return bloc[fbloc];
   }
 }

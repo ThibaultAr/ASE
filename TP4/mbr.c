@@ -16,7 +16,7 @@ void write_mbr() {
   write_sector_n(0, 0, (unsigned char *) &mbr, sizeof(struct mbr_s));
 }
 
-int sector_of_bloc(int numVol, int numBloc) {
+unsigned int sector_of_bloc(unsigned int numVol, unsigned int numBloc) {
   if(numVol > mbr.mbr_nVol) {
     printf("Volume inexistant\n");
     exit(1);
@@ -28,7 +28,7 @@ int sector_of_bloc(int numVol, int numBloc) {
   return (mbr.mbr_vols[numVol].vol_first_sector + numBloc) % SECTORS;
 }
 
-int cylinder_of_bloc(int numVol, int numBloc) {
+unsigned int cylinder_of_bloc(unsigned int numVol, unsigned int numBloc) {
   if(numVol > mbr.mbr_nVol) {
     printf("Volume inexistant\n");
     exit(1);
@@ -40,18 +40,22 @@ int cylinder_of_bloc(int numVol, int numBloc) {
   return mbr.mbr_vols[numVol].vol_first_cylinder + (mbr.mbr_vols[numVol].vol_first_sector + numBloc) / SECTORS;
 }
 
-void read_bloc(int numVol, int numBloc, unsigned char *buffer) {
+void read_bloc(unsigned int numVol, unsigned int numBloc, unsigned char *buffer) {
   read_sector(cylinder_of_bloc(numVol, numBloc), sector_of_bloc(numVol, numBloc), buffer);
 }
 
-void read_bloc_n(int numVol, int numBloc, unsigned char *buffer, int size) {
+void read_bloc_n(unsigned int numVol, unsigned int numBloc, unsigned char *buffer, int size) {
   read_sector_n(cylinder_of_bloc(numVol, numBloc), sector_of_bloc(numVol, numBloc), buffer, size);
 }
 
-void write_bloc(int numVol, int numBloc, unsigned char *buffer) {
+void write_bloc(unsigned int numVol, unsigned int numBloc, unsigned char *buffer) {
   write_sector(cylinder_of_bloc(numVol, numBloc), sector_of_bloc(numVol, numBloc), buffer);
 }
 
-void write_bloc_n(int numVol, int numBloc, unsigned char *buffer, int size) {
+void write_bloc_n(unsigned int numVol, unsigned int numBloc, unsigned char *buffer, int size) {
   write_sector_n(cylinder_of_bloc(numVol, numBloc), sector_of_bloc(numVol, numBloc), buffer, size);
+}
+
+void format_bloc(unsigned int numVol, unsigned int numBloc) {
+  format_sector(cylinder_of_bloc(numVol, numBloc), sector_of_bloc(numVol, numBloc), 1, 0);
 }

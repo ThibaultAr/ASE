@@ -30,16 +30,18 @@ int read_mbr();
 
 void write_mbr();
 
-void read_bloc(int numVol, int numBloc, unsigned char *buffer);
+void read_bloc(unsigned int numVol, unsigned int numBloc, unsigned char *buffer);
 
-void read_bloc_n(int numVol, int numBloc, unsigned char *buffer, int size);
+void read_bloc_n(unsigned int numVol, unsigned int numBloc, unsigned char *buffer, int size);
 
-void write_bloc(int numVol, int numBloc, unsigned char *buffer);
+void write_bloc(unsigned int numVol, unsigned int numBloc, unsigned char *buffer);
 
-void write_bloc_n(int numVol, int numBloc, unsigned char *buffer, int size);
+void write_bloc_n(unsigned int numVol, unsigned int numBloc, unsigned char *buffer, int size);
 
-int sector_of_bloc(int numVol, int numBloc);
+unsigned int sector_of_bloc(unsigned int numVol, unsigned int numBloc);
 
-int cylinder_of_bloc(int numVol, int numBloc);
+unsigned int cylinder_of_bloc(unsigned int numVol, unsigned int numBloc);
+
+void format_bloc(unsigned int numVol, unsigned int numBloc);
 
 #endif

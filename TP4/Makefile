@@ -1,8 +1,8 @@
 # $Id: Makefile,v 1.2 2004/10/12 09:06:17 marquet Exp $
 ##############################################################################
 
-#ROOTDIR=/home/dubois/FIL/M1S1/ASE/libhardware
-ROOTDIR=/home/enseign/ASE
+ROOTDIR=/home/dubois/FIL/M1S1/ASE/libhardware
+#ROOTDIR=/home/enseign/ASE
 
 CC	= gcc
 CFLAGS	= -Wall -ansi -pedantic -m32
