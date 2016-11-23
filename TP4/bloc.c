@@ -63,6 +63,7 @@ void free_bloc (unsigned int bloc) {
 }
 
 void read_inode(unsigned int inumber, struct inode_s * inode){
+
   read_bloc_n(current_volume, inumber, (unsigned char *) inode, sizeof(struct inode_s));
 }
 
@@ -126,6 +127,14 @@ int delete_inode(unsigned int inumber){
 unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc, int do_allocate) {
   struct inode_s inode;
   read_inode(inumber, &inode);
-  if(fbloc < NDIRECT)
-    return inode.i_direct[fbloc];
+  if(fbloc < NDIRECT) {
+    if(do_allocate && !inode.i_direct[fbloc]) {
+      int newBlock = new_bloc();
+      if(newBlock != 0) {
+        inode.i_direct[fbloc] = newBlock;
+        write_inode(inumber, &inode);
+      }
+      return inode.i_direct[fbloc];
+    }
+  }
 }
