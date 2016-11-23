@@ -63,11 +63,11 @@ void free_bloc (unsigned int bloc) {
 }
 
 void read_inode(unsigned int inumber, struct inode_s * inode){
-  read_bloc_n(current_volume, inumber, (unsigned char *) &inode, sizeof(struct inode_s));
+  read_bloc_n(current_volume, inumber, (unsigned char *) inode, sizeof(struct inode_s));
 }
 
 void write_inode(unsigned int inumber, struct inode_s * inode){
-  write_bloc_n(current_volume, inumber, (unsigned char *) &inode, sizeof(struct inode_s));
+  write_bloc_n(current_volume, inumber, (unsigned char *) inode, sizeof(struct inode_s));
 }
 
 unsigned int create_inode(enum file_type_e type){

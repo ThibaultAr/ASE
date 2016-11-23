@@ -33,7 +33,7 @@ load_current_volume ()
     ffatal(!errno, "bad value of $CURRENT_VOLUME %s", current_volume_str);
 
     status = load_super(current_volume);
-    ffatal(!status, "unable to load super of vol %d", current_volume);
+    ffatal(status, "unable to load super of vol %d", current_volume);
 }
 
 /* return hw_config filename */
