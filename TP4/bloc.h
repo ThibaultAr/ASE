@@ -34,7 +34,7 @@ struct inode_s {
   unsigned int i_2indirect;
 };
 
-void init_super(unsigned int vol);
+void init_super();
 
 int load_super(unsigned int vol);
 

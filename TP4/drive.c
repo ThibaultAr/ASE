@@ -31,8 +31,8 @@ void write_sector(unsigned int cylinder, unsigned int sector, const unsigned cha
 }
 
 void write_sector_n(unsigned int cylinder, unsigned int sector, const unsigned char *buffer, unsigned int buffersize) {
-  memcpy(MASTERBUFFER, buffer, buffersize);
   goto_sector(cylinder, sector);
+  memcpy(MASTERBUFFER, buffer, buffersize);
   _out(HDA_DATAREGS, 0);
   _out(HDA_DATAREGS + 1, 1);
   _out(HDA_CMDREG, CMD_WRITE);

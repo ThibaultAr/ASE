@@ -2,20 +2,20 @@
 
 struct super_s super;
 
-void init_super(unsigned int vol) {
+void init_super() {
   struct freeBloc_s fb;
 
   super.super_magic = SUPERMAGIC;
   super.super_firstFree = 1;
-  super.super_nFree = mbr.mbr_vols[vol].vol_nSector - 1;
+  super.super_nFree = mbr.mbr_vols[current_volume].vol_nSector - 1;
   super.super_root = 0;
 
   save_super();
 
-  fb.fb_nblocs = mbr.mbr_vols[vol].vol_nSector - 1;
+  fb.fb_nblocs = mbr.mbr_vols[current_volume].vol_nSector - 1;
   fb.fb_next = 0;
 
-  write_bloc_n(vol, 1, (unsigned char *) &fb, sizeof(struct freeBloc_s));
+  write_bloc_n(current_volume, 1, (unsigned char *) &fb, sizeof(struct freeBloc_s));
 }
 
 int load_super(unsigned int vol) {
