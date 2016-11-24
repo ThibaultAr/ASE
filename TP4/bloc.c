@@ -132,6 +132,7 @@ unsigned int new_bloc_zero() {
 unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc, int do_allocate) {
   struct inode_s inode;
   read_inode(inumber, &inode);
+  /* Direct */
   if(fbloc < NDIRECT) {
     if(do_allocate && !inode.i_direct[fbloc]) {
       unsigned int newBlock = new_bloc_zero();
@@ -143,6 +144,7 @@ unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc, int do_all
     return inode.i_direct[fbloc];
   }
 
+  /* Indirect */
   fbloc -= NDIRECT;
 
   if(fbloc < NNBPB) {
@@ -160,9 +162,49 @@ unsigned int vbloc_of_fbloc(unsigned int inumber, unsigned int fbloc, int do_all
         }
         write_bloc_n(current_volume, inode.i_indirect, (unsigned char *) bloc, sizeof(unsigned int));
         write_inode(inumber, &inode);
+      } else {
+        return 0;
       }
     }
     read_bloc_n(current_volume, inode.i_indirect, bloc, sizeof(unsigned int));
     return bloc[fbloc];
   }
+
+  /* Double indirect */
+  fbloc -= NNBPB;
+
+  if(fbloc < NNBPB * NNBPB) {
+    unsigned int bloc[NNBPB], bloc1[NNBPB];
+    if(do_allocate && !inode.i_2indirect) {
+      unsigned int newBlock = new_bloc_zero();
+      if(newBlock != 0) {
+        int i, j;
+        inode.i_2indirect = newBlock;
+        for(i = 0; i < NNBPB; i++) {
+          unsigned int newBlock1 = new_bloc_zero();
+          if(newBlock1 != 0) {
+            for(j = 0; j < NNBPB; j++) {
+              unsigned int newBlock2 = new_bloc_zero();
+              if(newBlock2 != 0) {
+                bloc1[j] = newBlock2;
+              }
+            }
+            write_bloc_n(current_volume, bloc[i], (unsigned char *) bloc1, sizeof(unsigned int));
+          }
+        }
+        write_bloc_n(current_volume, inode.i_2indirect, (unsigned char *) bloc, sizeof(unsigned int));
+        write_inode(inumber, &inode);
+      } else {
+        return 0;
+      }
+    }
+    read_bloc_n(current_volume, inode.i_2indirect, bloc, sizeof(unsigned int));
+    if(bloc[fbloc / NNBPB] == 0) return 0;
+    read_bloc_n(current_volume, bloc[fbloc / NNBPB], bloc1, sizeof(unsigned int));
+    if(bloc[fbloc % NNBPB] == 0) return 0;
+    return bloc[fbloc % NNBPB];
+  }
+
+  printf("Fichier trop grand\n");
+  exit(1);
 }
